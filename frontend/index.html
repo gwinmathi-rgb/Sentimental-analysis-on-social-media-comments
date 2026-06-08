@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentilyze AI - Social Media Sentiment Intelligence</title>
+    <!-- Meta tags for description -->
+    <meta name="description" content="Sentilyze AI provides real-time sentiment analysis, subjectivity metrics, and emotion intelligence dashboards for social media comments.">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for beautiful charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar">
+        <div class="logo-container">
+            <div class="logo-icon">S</div>
+            <div>
+                <h1 class="logo-text">Sentilyze AI</h1>
+                <div class="logo-sub">NLP Sentiment Engine</div>
+            </div>
+        </div>
+        
+        <nav class="nav-menu">
+            <a href="#" class="nav-item active" data-tab="dashboard" id="navLinkDashboard">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </a>
+            <a href="#" class="nav-item" data-tab="single" id="navLinkSingle">
+                <i class="fas fa-comment-dots"></i> Single Comment
+            </a>
+            <a href="#" class="nav-item" data-tab="bulk" id="navLinkBulk">
+                <i class="fas fa-file-upload"></i> Bulk Upload
+            </a>
+            <a href="#" class="nav-item" data-tab="simulator" id="navLinkSimulator">
+                <i class="fas fa-satellite-dish"></i> Live Stream Simulator
+            </a>
+            <a href="#" class="nav-item" data-tab="info" id="navLinkInfo">
+                <i class="fas fa-info-circle"></i> NLP Methodology
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <p>Sentilyze AI v1.0.0</p>
+            <p style="margin-top: 4px; font-size: 0.75rem;">Premium Analytical Suite</p>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-content">
+
+        <!-- ============================================ -->
+        <!-- 1. DASHBOARD PAGE -->
+        <!-- ============================================ -->
+        <section id="dashboardPage" class="page active">
+            <div class="page-header">
+                <h2 class="page-title">Sentiment & Emotion Intelligence</h2>
+                <p class="page-desc">Overview of overall analytics, comment distributions, and keywords.</p>
+            </div>
+            
+            <!-- Key Metrics Grid -->
+            <div class="metrics-grid">
+                <div class="metric-card glass-panel" id="cardTotalComments">
+                    <div class="metric-header">
+                        <span>Total Comments</span>
+                        <i class="fas fa-comments metric-icon"></i>
+                    </div>
+                    <div class="metric-value" id="dashTotalComments">0</div>
+                    <div class="metric-subtext">Cumulative analyzed items</div>
+                </div>
+                
+                <div class="metric-card glass-panel sec" id="cardSentimentIndex">
+                    <div class="metric-header">
+                        <span>Sentiment Index</span>
+                        <i class="fas fa-balance-scale metric-icon"></i>
+                    </div>
+                    <div class="metric-value" id="dashSentimentIndex">0.00</div>
+                    <div class="metric-subtext">Average compound (-1.00 to +1.00)</div>
+                </div>
+                
+                <div class="metric-card glass-panel pos" id="cardPositivityRate">
+                    <div class="metric-header">
+                        <span>Positivity Rate</span>
+                        <i class="fas fa-smile metric-icon"></i>
+                    </div>
+                    <div class="metric-value" id="dashPositivityRate">0%</div>
+                    <div class="metric-subtext">Percentage of positive sentiment</div>
+                </div>
+                
+                <div class="metric-card glass-panel neg" id="cardDominantEmotion">
+                    <div class="metric-header">
+                        <span>Dominant Emotion</span>
+                        <i class="fas fa-heart metric-icon"></i>
+                    </div>
+                    <div class="metric-value" style="font-size: 1.6rem; margin-top: 10px;" id="dashDominantEmotion">N/A</div>
+                    <div class="metric-subtext">Primary emotional polarity weight</div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <div class="chart-card glass-panel" id="cardDashSentimentChart">
+                    <h3 class="chart-title"><i class="fas fa-pie-chart" style="color: var(--secondary)"></i> Sentiment Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="dashSentimentChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card glass-panel" id="cardDashEmotionChart">
+                    <h3 class="chart-title"><i class="fas fa-spider" style="color: var(--primary)"></i> Emotion Intensity Profile</h3>
+                    <div class="chart-container">
+                        <canvas id="dashEmotionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Word Cloud Card -->
+            <div class="glass-panel" style="padding: 24px; min-height: 340px; display: flex; flex-direction: column;" id="cardDashWordCloud">
+                <h3 class="chart-title" style="margin-bottom: 16px;"><i class="fas fa-cloud" style="color: var(--secondary)"></i> Extracted Keyword Cloud</h3>
+                <div class="word-cloud-wrapper" style="flex-grow: 1;">
+                    <canvas id="wordCloudCanvas"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 2. SINGLE TEXT ANALYZER -->
+        <!-- ============================================ -->
+        <section id="singlePage" class="page">
+            <div class="page-header">
+                <h2 class="page-title">Single Comment Analyzer</h2>
+                <p class="page-desc">Type or paste any social media comment to analyze sentiment and emotion profiles instantly.</p>
+            </div>
+
+            <div class="input-card glass-panel" id="cardSingleInput">
+                <div class="textarea-container">
+                    <textarea id="singleCommentText" placeholder="Paste social media comments here (e.g., 'This is the best update ever! So excited to try it out! 😂')..." maxlength="500"></textarea>
+                    <div class="char-counter" id="singleCharCounter">0 / 500</div>
+                </div>
+                <div class="btn-row">
+                    <button class="btn btn-primary" id="btnAnalyzeSingle">
+                        <i class="fas fa-magic"></i> Analyze Comment
+                    </button>
+                    <button class="btn btn-secondary" id="btnClearSingle">
+                        Clear Input
+                    </button>
+                </div>
+            </div>
+
+            <!-- RESULTS SECTION -->
+            <div class="results-section" id="singleResultsSection">
+                <div class="results-grid">
+                    <!-- Left: Metadata and Polarities -->
+                    <div class="result-card-details glass-panel" id="cardSingleResultsLeft">
+                        <h3 class="chart-title" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 20px;">
+                            Analysis Metrics
+                        </h3>
+                        
+                        <div class="sentiment-badge-row">
+                            <span class="text-muted" style="font-weight: 600;">Sentiment Polarity:</span>
+                            <span class="badge neutral" id="singleSentimentBadge">Neutral</span>
+                        </div>
+
+                        <div class="metric-slider-container">
+                            <div class="slider-label">
+                                <span>Compound Score (VADER)</span>
+                                <span id="singleCompoundVal">0.00</span>
+                            </div>
+                            <div class="slider-bar">
+                                <div class="slider-fill" id="singleCompoundFill"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">
+                                <span>-1.00 (Negative)</span>
+                                <span>0.00</span>
+                                <span>+1.00 (Positive)</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-slider-container" style="margin-top: 24px;">
+                            <div class="slider-label">
+                                <span>Subjectivity Metric (TextBlob)</span>
+                                <span id="singleSubjectivityVal">0.00</span>
+                            </div>
+                            <div class="slider-bar">
+                                <div class="slider-fill" id="singleSubjectivityFill"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">
+                                <span>0.00 (Objective Facts)</span>
+                                <span>1.00 (Opinionated)</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 28px;">
+                            <h4 style="font-size: 0.9rem; margin-bottom: 8px; color: var(--text-primary);">Extracted Keywords</h4>
+                            <div class="tags-container" id="singleKeywords">
+                                <span class="text-muted">None detected</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <h4 style="font-size: 0.9rem; margin-bottom: 8px; color: var(--text-primary);">Social Entities (Hashtags/Mentions)</h4>
+                            <div class="tags-container" id="singleHashtags">
+                                <span class="text-muted">None detected</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <h4 style="font-size: 0.9rem; margin-bottom: 8px; color: var(--text-primary);">Emojis Extracted</h4>
+                            <div class="tags-container" id="singleEmojis">
+                                <span class="text-muted">None detected</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Emotion Distribution Chart -->
+                    <div class="result-card-details glass-panel" id="cardSingleResultsRight">
+                        <h3 class="chart-title" style="margin-bottom: 20px;"><i class="fas fa-chart-bar" style="color: var(--primary)"></i> Emotion breakdown</h3>
+                        <div class="chart-container" style="height: 320px;">
+                            <canvas id="singleEmotionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 3. BULK FILE ANALYZER -->
+        <!-- ============================================ -->
+        <section id="bulkPage" class="page">
+            <div class="page-header">
+                <h2 class="page-title">Bulk CSV/JSON Comments Analyzer</h2>
+                <p class="page-desc">Upload lists of comments or tweets in CSV or JSON format, process them, and download detailed reports.</p>
+            </div>
+
+            <!-- Upload Zone -->
+            <div class="upload-zone" id="uploadZone">
+                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                <h3 class="upload-title">Drag and drop file here</h3>
+                <p class="upload-desc">Supports .csv and .json files (Recommended columns: 'text', 'comment')</p>
+                <input type="file" id="fileInput" accept=".csv,.json" style="display: none;">
+            </div>
+
+            <!-- Progress Panel -->
+            <div class="progress-panel glass-panel" id="progressPanel">
+                <div class="progress-header">
+                    <span id="progressStatus">Analyzing comments dataset...</span>
+                    <span id="progressPercent" style="font-weight: bold;">0%</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <!-- BULK ANALYSIS RESULTS -->
+            <div class="results-section" id="bulkResultsSection">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3 class="font-heading" style="font-size: 1.5rem;">Dataset Summary</h3>
+                    <button class="btn btn-primary" id="btnDownloadBulk">
+                        <i class="fas fa-download"></i> Download Rich CSV Report
+                    </button>
+                </div>
+
+                <!-- KPI stats specific to uploaded file -->
+                <div class="metrics-grid">
+                    <div class="metric-card glass-panel" id="bulkCardComments">
+                        <div class="metric-header"><span>Comments Processed</span><i class="fas fa-file-alt metric-icon"></i></div>
+                        <div class="metric-value" id="bulkTotalComments">0</div>
+                    </div>
+                    <div class="metric-card glass-panel sec" id="bulkCardSentiment">
+                        <div class="metric-header"><span>Avg Sentiment Score</span><i class="fas fa-balance-scale metric-icon"></i></div>
+                        <div class="metric-value" id="bulkAvgSentiment">0.00</div>
+                    </div>
+                    <div class="metric-card glass-panel pos" id="bulkCardSubjectivity">
+                        <div class="metric-header"><span>Avg Subjectivity</span><i class="fas fa-brain metric-icon"></i></div>
+                        <div class="metric-value" id="bulkAvgSubjectivity">0.00</div>
+                    </div>
+                    <div class="metric-card glass-panel neg" id="bulkCardEmotion">
+                        <div class="metric-header"><span>Dominant Emotion</span><i class="fas fa-heart metric-icon"></i></div>
+                        <div class="metric-value" style="font-size: 1.4rem; margin-top: 10px;" id="bulkDominantEmotion">Neutral</div>
+                    </div>
+                </div>
+
+                <!-- Chart grids for file -->
+                <div class="charts-grid">
+                    <div class="chart-card glass-panel" id="bulkCardSentimentChart">
+                        <h3 class="chart-title"><i class="fas fa-chart-pie" style="color: var(--secondary)"></i> Sentiment Ratio</h3>
+                        <div class="chart-container">
+                            <canvas id="bulkSentimentChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card glass-panel" id="bulkCardEmotionChart">
+                        <h3 class="chart-title"><i class="fas fa-chart-bar" style="color: var(--primary)"></i> Average Emotions Scale</h3>
+                        <div class="chart-container">
+                            <canvas id="bulkEmotionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Table of first 100 rows -->
+                <div class="glass-panel" style="padding: 24px;" id="bulkCardPreview">
+                    <h3 class="chart-title" style="margin-bottom: 12px;"><i class="fas fa-list" style="color: var(--secondary)"></i> Data Sample Preview</h3>
+                    <div class="table-container">
+                        <table class="preview-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px;">ID</th>
+                                    <th>Comment Content</th>
+                                    <th style="width: 140px;">Sentiment</th>
+                                    <th style="width: 100px;">Score</th>
+                                </tr>
+                            </thead>
+                            <tbody id="previewTableBody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 4. LIVE PLATFORM STREAM SIMULATOR -->
+        <!-- ============================================ -->
+        <section id="simulatorPage" class="page">
+            <div class="page-header">
+                <h2 class="page-title">Live Comment Stream Simulator</h2>
+                <p class="page-desc">Simulate live keyword scrapes and API fetches from Reddit, YouTube, or Twitter/X. Watch the graphs update live.</p>
+            </div>
+
+            <!-- Configuration Card -->
+            <div class="simulator-config glass-panel" id="cardSimConfig">
+                <div class="form-group">
+                    <label for="platformSelect">Select Media Platform</label>
+                    <select class="form-control" id="platformSelect">
+                        <option value="twitter">Twitter / X Feed</option>
+                        <option value="reddit">Reddit Submissions</option>
+                        <option value="youtube">YouTube Comments</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="simQueryInput">Filter Hashtag / Search Term</label>
+                    <input type="text" class="form-control" id="simQueryInput" placeholder="e.g. #ChatGPT, Crypto, #Cyberpunk, gaming" value="AI">
+                </div>
+
+                <div>
+                    <button class="btn btn-primary" id="btnStartSim">
+                        <i class="fas fa-play"></i> Start Stream
+                    </button>
+                    <button class="btn btn-secondary" id="btnStopSim" style="display: none; background-color: var(--negative-bg); border-color: rgba(244, 63, 94, 0.4); color: var(--negative);">
+                        <i class="fas fa-stop"></i> Stop Stream
+                    </button>
+                </div>
+            </div>
+
+            <!-- Simulator Layout -->
+            <div class="simulator-layout">
+                <!-- Left: Streaming Comments Container -->
+                <div class="glass-panel" style="padding: 24px; display: flex; flex-direction: column;" id="cardSimStream">
+                    <h3 class="chart-title" style="margin-bottom: 16px; justify-content: space-between;">
+                        <span><i class="fas fa-satellite-dish" style="color: var(--secondary)"></i> Live Comments Feed</span>
+                        <span id="simIndicator" style="display: none; font-size: 0.8rem; color: var(--text-secondary);">
+                            <span class="pulse-indicator"></span>Streaming...
+                        </span>
+                    </h3>
+                    
+                    <div class="stream-container" id="streamContainer">
+                        <div class="text-muted text-center py-4" style="margin: auto;">
+                            Click "Start Stream" above to simulate live scraping data.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Live analytical updates -->
+                <div class="sim-metrics">
+                    <!-- Live Sentiment Timeline -->
+                    <div class="chart-card glass-panel sim-chart-card" id="cardSimTimeline">
+                        <h3 class="chart-title"><i class="fas fa-wave-square" style="color: var(--secondary)"></i> Live Sentiment Polarity Timeline</h3>
+                        <div class="chart-container">
+                            <canvas id="simTimelineChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Accumulative Emotions -->
+                    <div class="chart-card glass-panel sim-chart-card" id="cardSimEmotion">
+                        <h3 class="chart-title"><i class="fas fa-chart-bar" style="color: var(--primary)"></i> Live Emotion Counts</h3>
+                        <div class="chart-container">
+                            <canvas id="simEmotionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 5. NLP METHODOLOGY INFO PAGE -->
+        <!-- ============================================ -->
+        <section id="infoPage" class="page">
+            <div class="page-header">
+                <h2 class="page-title">NLP Methodology & Technologies</h2>
+                <p class="page-desc">Details of libraries, metrics, and models used for processing social comments.</p>
+            </div>
+
+            <div class="info-layout">
+                <div class="info-card glass-panel" id="cardInfoDetails">
+                    <h3>1. VADER Sentiment Scoring</h3>
+                    <p>
+                        We use NLTK's **VADER (Valence Aware Dictionary and sEntiment Reasoner)** for calculating comment scores. 
+                        VADER is specifically attuned to sentiments expressed in social media, meaning:
+                    </p>
+                    <ul>
+                        <li>It handles **emojis** (e.g., 👍, 😭, 😡) by parsing their implicit emotional valences.</li>
+                        <li>It scores **punctuation and casing** (e.g., "amazing!" vs "AMAZING!!!") where capitalization increases intensity scores.</li>
+                        <li>It recognizes **contrastive conjunctions** (e.g., "The update is nice, *but* the load times are slow") and adjusts calculations accordingly.</li>
+                    </ul>
+
+                    <h3>2. Subjectivity Metrics</h3>
+                    <p>
+                        Through the **TextBlob** integration, the engine analyzes semantic structures to determine subjectivity.
+                        The subjectivity score is a float in range `[0.0, 1.0]` where **0.0** is highly objective (factual, neutral statements) and **1.0** is highly subjective (expressing opinions, personal biases, or beliefs).
+                    </p>
+
+                    <h3>3. Custom Emotion Classification Rule-Set</h3>
+                    <p>
+                        To provide advanced sentiment insights, we deploy a rule-based mapper mapping tokenized terms and emojis to 5 core emotions: 
+                        **Joy, Sadness, Anger, Fear, and Surprise**.
+                    </p>
+                    <p>
+                        Modifiers such as exclamations and all-caps terms increase the weights of detected emotions, helping user interfaces display expressive distributions.
+                    </p>
+
+                    <h3>4. Technical Architecture</h3>
+                    <ul>
+                        <li>**Backend**: FastAPI, serving REST points.</li>
+                        <li>**Web Server**: Uvicorn.</li>
+                        <li>**Analytics libraries**: Pandas, NLTK, TextBlob.</li>
+                        <li>**Frontend**: HTML5 Canvas, CSS Grid, Flexbox, Vanilla JavaScript, Chart.js.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- COLUMN SELECTOR MODAL (CSV Upload) -->
+    <div class="modal-overlay" id="columnModal">
+        <div class="modal glass-panel">
+            <h3 class="modal-title">Select Text Column</h3>
+            <div class="modal-body">
+                <p style="margin-bottom: 12px; color: var(--text-secondary); font-size: 0.9rem;">
+                    We detected multiple columns in your CSV file. Please select the column that contains the social media comments:
+                </p>
+                <div class="form-group" style="min-width: 100%;">
+                    <select class="form-control" id="columnSelect">
+                        <!-- Options filled dynamically -->
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btnCancelColumn">Cancel</button>
+                <button class="btn btn-primary" id="btnConfirmColumn">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script loading -->
+    <script src="index.js"></script>
+</body>
+</html>

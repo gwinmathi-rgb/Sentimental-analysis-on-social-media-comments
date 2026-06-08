@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+cloudflared.exe
+.DS_Store
+*.csv
+!test_comments.csv
+*.log
+.git/
